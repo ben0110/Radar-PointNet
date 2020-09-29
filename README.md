@@ -20,6 +20,10 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
     * After deleting the unmanted 2D box, press "enter" to show the image without the deleted boxes. if the all the unwanted boxes are all deleted, repress "enter" to move to the next frame. if not, press "r" to restart the deletion process of this frame.
   * the 2D detected pedestrians will automatically be deleted by frustum-Pointnet, As normally there is no PC corresponding to this 2D object detection. the script " " will be in charge of transforming all the 2D detection from XML format to KITTI format.
 ## Frustum-PointNet
+
+![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/F_tnet_arch.jpg)
+
+
 ### Train
   the script "" is responsible of training Frutum-Pointnet in either versions (version1 and version 2) through the cmd:
   the scripts will output in the log datei of the corresponding version, a log file which contains quantitaive results on the train and the chosen 2D detection resolution for the val and test dataset for each epoc such as average segmentation accuracy, average detection accuracy per box, average detection accuracy and recall per frame. moreover it will save the 3D detection results for the val and test datase under the file "results_"res".  
@@ -32,6 +36,10 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
   this will output in the terminal the inference time for each frame and at the the average inference time and the quantitative results.
 ## Radar-PointNet
 ### Radar-PointNet-RoI
+
+![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/Radar-Pointnet.jpg)
+
+
   This reporsitory allow to train and evalaute Radar-PointNet with the total RoI as input or with the divided RoI in three Anchor as input. the outputs schemas used is the same as explained in Frustum-Pointnet.
   ### Train
       
@@ -40,10 +48,14 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
   ### Test
   
 ### Radar-PointNEt-Para
+
   This repository allow to train and evaluate Radar-PointNet with both proposal generation method: iterative method or minima method. MOrover two version exists for this variance: with and without the classification method. for both method we employed a parallelization technique for the segmentation network which cooresponds on grouping the pc for each RoI together. a prallelization technique for the Bbox is employed only whith proposals classification method 
   ### Train:
   for training  Radar-PointNEt-Para, we use a two step training method: first the segmentation with or w/o the proposal classification network are trained and then the bbox network are trained. the next commands represent the train and evaluation cmds for the different existing version:
   _Radar-PointNEt-Para w/o  classification_
+  
+![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/RADAR-pointnet-para.jpg)
+  
   Train the segementation network alone through the cmd:
   
   
@@ -54,6 +66,10 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
   
   Same output schemas is used here as Frustum-PointNet.
   _Radar-PointNEt-Para w/o  classification_
+  
+  ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/RADAR-pointnet-para_cls.jpg)
+  
+  
   Train the segmenetation network with the classification network with the cmd:
   
   This will output the train, val, results in the form of pickle file which contains the frame id,the detected object pc present in each proposals and its coresponding classsfication score. The quantitaive results (average segmentation accuracy, average classification network) are stored in the corresponding logfile.
