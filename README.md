@@ -42,10 +42,13 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
 
   This reporsitory allow to train and evalaute Radar-PointNet with the total RoI as input or with the divided RoI in three Anchor as input. the outputs schemas used is the same as explained in Frustum-Pointnet.
   ### Train
+    python train/train.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --AB_proposals True/False
       
   ### Eval
+    python train/eval.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 1500 --max_epoch 1 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --restore_model_path  /root/frustum-pointnets_RSC_RADAR/train/log_v2/10-05-2020-13:59:22/ckpt/model_200.ckpt  --AB_proposals True/False
   
   ### Test
+    python train/test.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 1500 --max_epoch 1 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --restore_model_path  /root/frustum-pointnets_RSC_RADAR/train/log_v2/10-05-2020-13:59:22/ckpt/model_200.ckpt --AB_proposals True/False
   
 ### Radar-PointNEt-Para
 
@@ -58,11 +61,14 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
   
   Train the segementation network alone through the cmd:
   
+    python train/train_seg.py --gpu 1 --model frustum_pointnets_seg_v2  --log_dir train/log_v2 --num_point 25000 --max_epoch 201 --batch_size 4 --decay_step 800000 --decay_rate 0.5  --data_path /root/frustum-pointnets_RSC/dataset/ --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg/
   
   
   This will output the train, val, results in the form of pickle file which contains the frame id,the detected object pc and the RoIs parameters for each frame. The quantitaive results (average segmentation accuracy) are stored in the corresponding logfile. 
   
-  Train the bbox network from the corresponding semgentation output is done through the cmd 
+  Train the bbox network from the corresponding semgentation output is done through the cmd:
+  
+    python train/train_bbox.py --gpu 1 --model frustum_pointnets_bbox_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5   --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg_cls/
   
   Same output schemas is used here as Frustum-PointNet.
   _Radar-PointNEt-Para w/o  classification_
@@ -72,9 +78,14 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
   
   Train the segmenetation network with the classification network with the cmd:
   
+    python train/train_seg_cls.py --gpu 1 --model frustum_pointnets_seg_cls_v2  --log_dir train/log_v2 --num_point 25000 --max_epoch 201 --batch_size 4 --decay_step 800000 --decay_rate 0.5  --data_path /root/frustum-pointnets_RSC/dataset/ --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg_cls/
+  
   This will output the train, val, results in the form of pickle file which contains the frame id,the detected object pc present in each proposals and its coresponding classsfication score. The quantitaive results (average segmentation accuracy, average classification network) are stored in the corresponding logfile.
   
   Training the bbox network from the corresponding semgentation output is done through the cmd:
+  
+     python train/train_bbox_cls.py --gpu 1 --model frustum_pointnets_bbox_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg_cls/
+  
   
   Same output schemas is used here as Frustum-PointNet.
     
