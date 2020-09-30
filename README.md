@@ -7,12 +7,12 @@
  ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/data_col_pip.jpg)
  
  ### ZED Camera
- starting publishing data  with the ZED camera occures through the cmd:
+ Starting publishing data  with the ZED camera occures through the cmd:
 
     roslaunch zed_display_rviz display_zed.launch 
  
  #### Radar AWR1843-boost
- starting publishing data with the  AWR1843camera occures through the cmd:
+ Starting publishing data with the  AWR1843camera occures through the cmd:
      
      roslaunch ti_mmwave_rospkg 1843es1_long_range_wo_rviz.launch
  
@@ -24,13 +24,13 @@
  
  to start publishing data, click the button "capture" on the DCA1000-evm board.
  
- ### data collection with rosbag:
+ ### Data collection with rosbag:
  
  storing the data published from the different boards is done through this command: 
     
     rosbag record /zed/zed_node/right/camera_info /zed/zed_node/right_raw/image_raw_color /zed/zed_node/point_cloud/cloud_registered /zed/zed_node/left_raw/camera_info /zed/zed_node/left_raw/image_raw_color /ti_mmwave/radar_scan_pcl /ti_mmwave/radar_scan /DCA1000_rawdata --duration=5 -b 3048
 
- ## data synchronization and extraction
+ ## Data synchronization and extraction
  
  We stored the collected data under the "date of capture" folder. Therefore, The data extraction and synchronization process occurs through the cmd
    
@@ -38,12 +38,12 @@
  
  This script performs time and spatial synchronization between the data and stores the sensor data in their respective files under their rosbag name.(example figure)
  
-## data annotation
+## Data annotation
 
 The data annotation occures through the 3d-BAT application.
 The data, which is extracted from a bag has to be first copied in the 3D-BAT folder. After performing annotation, the annotation file has to be downloaded and copied to the respective bag file.
 
-## dataset generation
+## Dataset generation
  
  The dataset generation can be applied on the whole annotated data bags with the application "create_DB" through the cmd:
       
@@ -51,7 +51,7 @@ The data, which is extracted from a bag has to be first copied in the 3D-BAT fol
       
  this will groupe all the annotated frames, which are stored into the different bags directories, under the same directory. (example figure)       
          
-## dividing the dataset:
+## Dividing the dataset:
 Currently we divided our dataset into two dataset "KITTI" and "KITTI_2". "KITTI" contains the "train" and "val" dataset. the "train" and "val" are divided randomely and the associated frames are stored respectively under the files "train.txt" and "val.txt" under "ImageSets" folder. "KITTI_2" contains the test dataset and the associated frames number are stored under ImageSets. 
 (add how to generate the dataset from the excel data containig metadata about the frames)
  # Frustum-PointNet
@@ -59,7 +59,7 @@ Currently we divided our dataset into two dataset "KITTI" and "KITTI_2". "KITTI"
 As the stereo camera has a max range of 20 m, some Pedestrians, which are present on the image, are not present in the stereo camera PC. Therefore, to optimize the training of the 2D object detection, we generated not only 2D bbox for the 3D annotated pedestrians but for all the pedestrians present in the left-image of the SC.
 the 2D annotations are present in the file YOLOV3/dataset/RSC/
 _Remarque_: the generated 2D annotations are in Kitti format, however the used YOLO version needs that the 2D annotation are in COCO format. the script "kitti2coco-label-trans.py" transforms the 2D annotation from kitti format to YOLO format.
-### train 
+### Train 
 Training Yolo.v3 occures through the cmd:
       
      python3 train.py --epochs 251 --cfg cfg/kitti.cfg --data data/RSC.data --multi-scale --weights weights/yolov3.pt --cache-images --device 0 
@@ -76,7 +76,7 @@ The command below is in charge of evaluating and outputting the results for YOLO
 _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform the detection result in KITTI format, 2 methods are employed:
   * As we mentioned, we had to include in the images, the pedestrians that are not included in the SC PC. therefore, we developped the script "Yolov3_val_results.py" , that permit to filter the 2D detection that corresponds to pedestrians that are 3D annotated per hand. this script work as following:
     
-    * load the script through the cmd:
+    * Load the script through the cmd:
       
           python3 Yolov3_val_results.py <res>
        
@@ -98,18 +98,21 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
   
     python train/train.py --gpu 1 --model frustum_pointnets_<V1/V2>  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res <res> --data_path /root/frustum-pointnets_RSC/dataset/
   
-  the scripts will output in the log datei of the corresponding version, a log file which contains quantitaive results on the train and the chosen 2D detection resolution for the val and test dataset for each epoc such as average segmentation accuracy, average detection accuracy per box, average detection accuracy and recall per frame. moreover it will save the 3D detection results for the val and test datase under the file "results_"res".  
+  the scripts will output in the log datei of the corresponding version, a log file which contains quantitaive results on the train and the chosen 2D detection resolution for the val and test dataset for each epoc such as average segmentation accuracy, average detection accuracy per box, average detection accuracy and recall per frame. moreover it will save the 3D detection results for the val and test datase under the file "results_"res".
+
+<add structure log directory>  
+
 ### eval
-  During training, the trained weights of the last 5 epochs are saved in "". Reeavaluation of the trained Frustum-pointnet can be done through the script cmd:
+  During training, the trained weights of the last 5 epochs are saved in "ckpt" directory. Reeavaluation of the trained Frustum-pointnet can be done through the script cmd:
   this will output the qualitative results in the terminal and update the results in the corresponding "results_res" file.
    
-    python train/eval.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res 204 --data_path /root/frustum-pointnets_RSC/dataset/
+    python train/eval.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res 204 --data_path /root/frustum-pointnets_RSC/dataset/ model_path <ckpt-model-path>
 ### test
   Inference is performed through the cmd:
   
-     python train/test.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res 204 --data_path /root/frustum-pointnets_RSC/dataset/
+     python train/test.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res 204 --data_path /root/frustum-pointnets_RSC/dataset/ model_path <ckpt-model-path> 
   
-  this will output in the terminal the inference time for each frame and at the the average inference time and the quantitative results.
+  This will output in the terminal the inference time for each frame and at the the average inference time and the quantitative results.
 ## Radar-PointNet
 ### Radar-PointNet-RoI
 
