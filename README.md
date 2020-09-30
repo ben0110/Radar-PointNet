@@ -10,14 +10,12 @@
  starting publishing data  with the ZED camera occures through the cmd:
 
     roslaunch zed_display_rviz display_zed.launch 
-
- adjusting the camera parameters can be done through the file 
+ 
  #### Radar AWR1843-boost
  starting publishing data with the  AWR1843camera occures through the cmd:
      
      roslaunch ti_mmwave_rospkg 1843es1_long_range_wo_rviz.launch
  
- adjusting the radar parameters can be don through the file
  
  ### DCA10000-evm (optional) 
  starting the DCA1000 evm occures through the cmd:
