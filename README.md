@@ -3,6 +3,9 @@
  # RSC-Dataset Generation
  ## Data collection
  as shown in the figure below, data collection occur through starting the rospackages of each sensor and storing the published data in a bagfile.
+ 
+ ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/data_col_pip.jpg)
+ 
  ### ZED Camera
  starting publishing data  with the ZED camera occures through the cmd:
 
@@ -23,22 +26,29 @@
  
  to start publishing data, click the button "capture" on the DCA1000-evm board.
  
- ### data collection through ros:
+ ### data collection with rosbag:
  
  storing the data published from the different boards is done through this command: 
     
     rosbag record /zed/zed_node/right/camera_info /zed/zed_node/right_raw/image_raw_color /zed/zed_node/point_cloud/cloud_registered /zed/zed_node/left_raw/camera_info /zed/zed_node/left_raw/image_raw_color /ti_mmwave/radar_scan_pcl /ti_mmwave/radar_scan /DCA1000_rawdata --duration=5 -b 3048
 
  ## data synchronization and extraction
- We stored the collected data under the data of capture. Therefore, The data extraction and synchronization process occurs through the cmd
-   bash extract.sh <data-collection-date> <bag-name>
- this script will take care of perfroming time and spatial synchronization between the data and storing the sensor data in their respective files under the rosbag name.(example figure)
+ 
+ We stored the collected data under the "date of capture" folder. Therefore, The data extraction and synchronization process occurs through the cmd
+   
+    bash extract.sh <data-collection-date> <bag-name>
+ 
+ this script perfromes time and spatial synchronization between the data and storing the sensor data in their respective files under the rosbag name.(example figure)
  
 ## data annotation
-the data annotation occures through the 3d-BAT application.
-the data for a rosbag has to be first copied in the 3D-BAT folder. After performing annotation, the annotation file has to be downloaded and copied to the respective bag file. 
+
+The data annotation occures through the 3d-BAT application.
+The data, which is extracted from a bag has to be first copied in the 3D-BAT folder. After performing annotation, the annotation file has to be downloaded and copied to the respective bag file.
+
 ## dataset generation
+ 
  the dataset generation can be applied on the whole annotated data bags with the script or through adding a specifig annotated data bag to the dataset through the cmd:
+         
 ## dividing the dataset:
 the actual dataset was generated through dividing the generated frames randomly for the train and val dataset for the frames 0..3145. the test dataset was picked per hand from the frames [150]
 Remarque: from the [], only the annotations of the frames used for the test dataset, were rechecked. the other part still has to be rechecked
@@ -49,18 +59,34 @@ As the stereo camera has a max range of 20 m, some Pedestrians, which are presen
 the 2D annotations are present in the file YOLOV3/dataset/RSC/
 _Remarque_: the generated 2D annotation are in Kitti format, however the used YOLO version needs that the 2D annotation are in COCO format. the script "" take in charge of transforming the 2D annotation from kitti format to YOLO format.
 ### train 
-the script "" is in charge of training Yolo.v3 through the cmd:
+Training Yolo.v3 occurs through the cmd:
+      
+     python3 train.py --epochs 251 --cfg cfg/kitti.cfg --data data/RSC.data --multi-scale --weights weights/yolov3.pt --cache-images --device 0 
+
 ### eval
-The script "" outputs a benchmark for different resolution. the results are outputted in the file ""
-The script "" is in charge of evaluating and outputting the results for YOLO.v3 through the cmd:
-_Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the detection result in KITTI format, 2 methods are employed:
-  * As we mentioned, we had to include in the images, the pedestrians that are not included in the SC PC. therefore, we developped the script " " , that permit to filter the 2D detection that corresponds to pedestrians that are 3D annotated. this script work as following:
+The cmd below outputs a benchmark for different resolution. the results are outputted in the txt file benchmark.txt
+
+    python3 test.py  --data data/RSC.data --weights weights/best.pt --cfg cfg/kitti.cfg --save-json --device 0 --batch-size 1 --task benchmark
+
+The command below is in charge of evaluating and outputting the results for YOLO.v3 for chosen resolution through the cmd:
+   
+    python3 test.py  --data data/RSC.data --weights weights/best.pt --cfg cfg/kitti.cfg --save-json --device 0 --batch-size 1 --img-size <res>
+ 
+_Remarque_: the results outputted from YOLO.V3 are in an json file. To transform the detection result in KITTI format, 2 methods are employed:
+  * As we mentioned, we had to include in the images, the pedestrians that are not included in the SC PC. therefore, we developped the script "Yolov3_val_results.py" , that permit to filter the 2D detection that corresponds to pedestrians that are 3D annotated per hand. this script work as following:
     
-    * load script "" through the cmd " "
+    * load the script through the cmd:
+      
+         python3 Yolov3_val_results.py <res>
+       
     * The image with the 2D ground truth (blue) and numerated 2D detection will appear
     * To delete a 2D detection press, the number of the 2D detection box and then "space"
     * After deleting the unmanted 2D box, press "enter" to show the image without the deleted boxes. if the all the unwanted boxes are all deleted, repress "enter" to move to the next frame. if not, press "r" to restart the deletion process of this frame.
-  * the 2D detected pedestrians will automatically be deleted by frustum-Pointnet, As normally there is no PC corresponding to this 2D object detection. the script " " will be in charge of transforming all the 2D detection from XML format to KITTI format.
+  * the 2D detected pedestrians will automatically be deleted by frustum-Pointnet, As normally there is no PC corresponding to this 2D object detection. the script "Yolov3_val_results_auto.py" will be in charge of transforming all the 2D detection from json format to KITTI format from the cmd:
+  
+         python3 Yolov3_val_result_auto.py <res>
+  
+  
 ## Frustum-PointNet
 
 ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/F_tnet_arch.jpg)
@@ -69,7 +95,7 @@ _Remarque_: the results outputted from YOLO.V3 in an XML file. to transform the 
 ### Train
   the script "train.py" is responsible of training Frutum-Pointnet in either versions (version1 and version 2) through the cmd:
   
-    python train/train.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res 204 --data_path /root/frustum-pointnets_RSC/dataset/
+    python train/train.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res <res> --data_path /root/frustum-pointnets_RSC/dataset/
   
   the scripts will output in the log datei of the corresponding version, a log file which contains quantitaive results on the train and the chosen 2D detection resolution for the val and test dataset for each epoc such as average segmentation accuracy, average detection accuracy per box, average detection accuracy and recall per frame. moreover it will save the 3D detection results for the val and test datase under the file "results_"res".  
 ### eval
