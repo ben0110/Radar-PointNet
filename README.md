@@ -36,7 +36,7 @@
    
     bash extract.sh <data-collection-date> <bag-name>
  
- this script perfromes time and spatial synchronization between the data and storing the sensor data in their respective files under the rosbag name.(example figure)
+ This script performs time and spatial synchronization between the data and stores the sensor data in their respective files under their rosbag name.(example figure)
  
 ## data annotation
 
@@ -45,10 +45,15 @@ The data, which is extracted from a bag has to be first copied in the 3D-BAT fol
 
 ## dataset generation
  
- The dataset generation can be applied on the whole annotated data bags with the script or through adding a specifig annotated data bag to the dataset through the cmd:
+ The dataset generation can be applied on the whole annotated data bags with the application "create_DB" through the cmd:
+      
+      ./create_DB
+      
+ this will groupe all the annotated frames, which are stored into the different bags directories, under the same directory. (example figure)       
          
 ## dividing the dataset:
-Currently we divided our dataset into two dataset "KITTI" and "KITTI_2". "KITTI" contains the "train" and "val" dataset. the "train" and "val" are divided randomely and the associated frames are stored respectively under the files "train.txt" and "val.txt" under "ImageSets" folder. "KITTI_2" contains the test dataset and the associated frames number are stored under ImageSets.  
+Currently we divided our dataset into two dataset "KITTI" and "KITTI_2". "KITTI" contains the "train" and "val" dataset. the "train" and "val" are divided randomely and the associated frames are stored respectively under the files "train.txt" and "val.txt" under "ImageSets" folder. "KITTI_2" contains the test dataset and the associated frames number are stored under ImageSets. 
+(add how to generate the dataset from the excel data containig metadata about the frames)
  # Frustum-PointNet
  ## YOLO-v3
 As the stereo camera has a max range of 20 m, some Pedestrians, which are present on the image, are not present in the stereo camera PC. Therefore, to optimize the training of the 2D object detection, we generated not only 2D bbox for the 3D annotated pedestrians but for all the pedestrians present in the left-image of the SC.
@@ -73,7 +78,7 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
     
     * load the script through the cmd:
       
-         python3 Yolov3_val_results.py <res>
+          python3 Yolov3_val_results.py <res>
        
     * The image with the 2D ground truth (blue) and numerated 2D detection will appear
     * To delete a 2D detection press, the number of the 2D detection box and then "space"
@@ -113,24 +118,24 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
 
   This reporsitory allow to train and evalaute Radar-PointNet with the total RoI as input or with the divided RoI in three Anchor as input. the outputs schemas used is the same as explained in Frustum-Pointnet.
   ### Train
-    python train/train.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --AB_proposals True/False
+    python train/train.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --AB_proposals <True/False>
       
   ### Eval
-    python train/eval.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 1500 --max_epoch 1 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --restore_model_path  /root/frustum-pointnets_RSC_RADAR/train/log_v2/10-05-2020-13:59:22/ckpt/model_200.ckpt  --AB_proposals True/False
+    python train/eval.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 1500 --max_epoch 1 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --restore_model_path  /root/frustum-pointnets_RSC_RADAR/train/log_v2/10-05-2020-13:59:22/ckpt/model_200.ckpt  --AB_proposals <True/False>
   
   ### Test
-    python train/test.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 1500 --max_epoch 1 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --model_path  /root/frustum-pointnets_RSC_RADAR/train/log_v2/10-05-2020-13:59:22/ckpt/model_200.ckpt --AB_proposals True/False
+    python train/test.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 1500 --max_epoch 1 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --model_path  /root/frustum-pointnets_RSC_RADAR/train/log_v2/10-05-2020-13:59:22/ckpt/model_200.ckpt --AB_proposals <True/False>
   
 ### Radar-PointNEt-Para
 
-  This repository allow to train and evaluate Radar-PointNet with both proposal generation method: iterative method or minima method. MOrover two version exists for this variance: with and without the classification method. for both method we employed a parallelization technique for the segmentation network which cooresponds on grouping the pc for each RoI together. a prallelization technique for the Bbox is employed only whith proposals classification method 
+  This repository allow to train and evaluate Radar-PointNet with both proposal generation methods: iterative method or minima method. Morover two version exists for this variance: with and without the classification method. for both method we employed a parallelization technique for the segmentation network which coresponds on grouping the pc for each RoI together. a prallelization technique for the Bbox is employed only whith proposals classification method. 
   ### Train:
   for training  Radar-PointNEt-Para, we use a two step training method: first the segmentation with or w/o the proposal classification network are trained and then the bbox network are trained. the next commands represent the train and evaluation cmds for the different existing version:
-  _Radar-PointNEt-Para w/o  classification_
+  _Radar-PointNEt-Para w/o proposal classification network
   
 ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/RADAR-pointnet-para.jpg)
   
-  Train the segementation network alone through the cmd:
+  Train the segmentation network alone through the cmd:
   
     python train/train_seg.py --gpu 1 --model frustum_pointnets_seg_v2  --log_dir train/log_v2 --num_point 25000 --max_epoch 201 --batch_size 4 --decay_step 800000 --decay_rate 0.5  --data_path /root/frustum-pointnets_RSC/dataset/ --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg/
   
@@ -142,7 +147,8 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
     python train/train_bbox.py --gpu 1 --model frustum_pointnets_bbox_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --data_path /root/frustum-pointnets_RSC/dataset/  --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg_cls/
   
   Same output schemas is used here as Frustum-PointNet.
-  _Radar-PointNEt-Para w/o  classification_
+  
+  _Radar-PointNEt-Para with proposals classification network
   
   ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/RADAR-pointnet-para_cls.jpg)
   
