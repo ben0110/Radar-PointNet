@@ -47,19 +47,17 @@ The data, which is extracted from a bag has to be first copied in the 3D-BAT fol
 
 ## dataset generation
  
- the dataset generation can be applied on the whole annotated data bags with the script or through adding a specifig annotated data bag to the dataset through the cmd:
+ The dataset generation can be applied on the whole annotated data bags with the script or through adding a specifig annotated data bag to the dataset through the cmd:
          
 ## dividing the dataset:
-the actual dataset was generated through dividing the generated frames randomly for the train and val dataset for the frames 0..3145. the test dataset was picked per hand from the frames [150]
-Remarque: from the [], only the annotations of the frames used for the test dataset, were rechecked. the other part still has to be rechecked
-Another method to generate the dataset can be done through the script, were it is based on the meta data stored in the excel file () ...  
+Currently we divided our dataset into two dataset "KITTI" and "KITTI_2". "KITTI" contains the "train" and "val" dataset. the "train" and "val" are divided randomely and the associated frames are stored respectively under the files "train.txt" and "val.txt" under "ImageSets" folder. "KITTI_2" contains the test dataset and the associated frames number are stored under ImageSets.  
  # Frustum-PointNet
  ## YOLO-v3
 As the stereo camera has a max range of 20 m, some Pedestrians, which are present on the image, are not present in the stereo camera PC. Therefore, to optimize the training of the 2D object detection, we generated not only 2D bbox for the 3D annotated pedestrians but for all the pedestrians present in the left-image of the SC.
 the 2D annotations are present in the file YOLOV3/dataset/RSC/
-_Remarque_: the generated 2D annotation are in Kitti format, however the used YOLO version needs that the 2D annotation are in COCO format. the script "" take in charge of transforming the 2D annotation from kitti format to YOLO format.
+_Remarque_: the generated 2D annotations are in Kitti format, however the used YOLO version needs that the 2D annotation are in COCO format. the script "kitti2coco-label-trans.py" transforms the 2D annotation from kitti format to YOLO format.
 ### train 
-Training Yolo.v3 occurs through the cmd:
+Training Yolo.v3 occures through the cmd:
       
      python3 train.py --epochs 251 --cfg cfg/kitti.cfg --data data/RSC.data --multi-scale --weights weights/yolov3.pt --cache-images --device 0 
 
@@ -95,7 +93,7 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
 ### Train
   the script "train.py" is responsible of training Frutum-Pointnet in either versions (version1 and version 2) through the cmd:
   
-    python train/train.py --gpu 1 --model frustum_pointnets_v2  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res <res> --data_path /root/frustum-pointnets_RSC/dataset/
+    python train/train.py --gpu 1 --model frustum_pointnets_<V1/V2>  --log_dir train/log_v2 --num_point 3500 --max_epoch 201 --batch_size 32 --decay_step 800000 --decay_rate 0.5  --res <res> --data_path /root/frustum-pointnets_RSC/dataset/
   
   the scripts will output in the log datei of the corresponding version, a log file which contains quantitaive results on the train and the chosen 2D detection resolution for the val and test dataset for each epoc such as average segmentation accuracy, average detection accuracy per box, average detection accuracy and recall per frame. moreover it will save the 3D detection results for the val and test datase under the file "results_"res".  
 ### eval
@@ -160,8 +158,7 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
   Training the bbox network from the corresponding semgentation output is done through the cmd:
   
      python train/train_bbox_cls.py --gpu 1 --model frustum_pointnets_bbox_v2  --log_dir train/log_v2 --num_point 512 --max_epoch 11 --batch_size 32 --decay_step 800000 --decay_rate 0.5 --data_path /root/frustum-pointnets_RSC/dataset/  --pkl_output_path /root/frustum-pointnets_RSC_RADAR_fil_PC_batch_para/dataset/RSC/seg_cls/
-  
-  
+     
   Same output schemas is used here as Frustum-PointNet.
     
   
