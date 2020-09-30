@@ -1,6 +1,34 @@
  # Radar-PointNet
  This repository contains different programs, used for the master thesis "Radar Stereo-Camera Sensor Fusion for 3D Pedestrian Detection"
- # Dataset Generation
+ # RSC-Dataset Generation
+ ## Data collection
+ as shown in the figure below, data collection occur through starting the rospackages of each sensor and storing the published data in a bagfile.
+ ### ZED Camera
+ starting publishing data  with the ZED camera occures through the cmd:
+ adjusting the camera parameters can be done through the file 
+ #### Radar AWR1843-boost
+ starting publishing data with the  AWR1843camera occures through the cmd:
+ 
+ adjusting the radar parameters can be don through the file
+ 
+ ### DCA10000-evm (optional) 
+ starting the DCA1000 evm occures through the cmd:
+ 
+ to start publishing, click the button "capture" on the DCA1000-evm board.
+ ## data synchronization and extraction
+ We stored the collected data under the data of capture. Therefore, The data extraction and synchronization process occurs through the cmd
+   bash extract.sh <data-collection-date> <bag-name>
+ this script will take care of perfroming time and spatial synchronization between the data and storing the sensor data in their respective files under the rosbag name.(example figure)
+ 
+## data annotation
+the data annotation occures through the 3d-BAT application.
+the data for a rosbag has to be first copied in the 3D-BAT folder. After performing annotation, the annotation file has to be downloaded and copied to the respective bag file. 
+## dataset generation
+ the dataset generation can be applied on the whole annotated data bags with the script or through adding a specifig annotated data bag to the dataset through the cmd:
+## dividing the dataset:
+the actual dataset was generated through dividing the generated frames randomly for the train and val dataset for the frames 0..3145. the test dataset was picked per hand from the frames [150]
+Remarque: from the [], only the annotations of the frames used for the test dataset, were rechecked. the other part still has to be rechecked
+Another method to generate the dataset can be done through the script, were it is based on the meta data stored in the excel file () ...  
  # Frustum-PointNet
  ## YOLO-v3
 As the stereo camera has a max range of 20 m, some Pedestrians, which are present on the image, are not present in the stereo camera PC. Therefore, to optimize the training of the 2D object detection, we generated not only 2D bbox for the 3D annotated pedestrians but for all the pedestrians present in the left-image of the SC.
