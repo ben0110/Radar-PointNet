@@ -6,23 +6,28 @@
  ### ZED Camera
  starting publishing data  with the ZED camera occures through the cmd:
 
-roslaunch zed_display_rviz display_zed.launch 
+    roslaunch zed_display_rviz display_zed.launch 
 
  adjusting the camera parameters can be done through the file 
  #### Radar AWR1843-boost
  starting publishing data with the  AWR1843camera occures through the cmd:
-  roslaunch ti_mmwave_rospkg 1843es1_long_range_wo_rviz.launch
+     
+     roslaunch ti_mmwave_rospkg 1843es1_long_range_wo_rviz.launch
  
  adjusting the radar parameters can be don through the file
  
  ### DCA10000-evm (optional) 
  starting the DCA1000 evm occures through the cmd:
  
- rosrun dca1000data_collection DCA1000_cli.py
+    rosrun dca1000data_collection DCA1000_cli.py
  
- to start publishing, click the button "capture" on the DCA1000-evm board.
+ to start publishing data, click the button "capture" on the DCA1000-evm board.
  
- rosbag record /zed/zed_node/right/camera_info /zed/zed_node/right_raw/image_raw_color /zed/zed_node/point_cloud/cloud_registered /zed/zed_node/left_raw/camera_info /zed/zed_node/left_raw/image_raw_color /ti_mmwave/radar_scan_pcl /ti_mmwave/radar_scan /DCA1000_rawdata --duration=5 -b 3048
+ ### data collection through ros:
+ 
+ storing the data published from the different boards is done through this command: 
+    
+    rosbag record /zed/zed_node/right/camera_info /zed/zed_node/right_raw/image_raw_color /zed/zed_node/point_cloud/cloud_registered /zed/zed_node/left_raw/camera_info /zed/zed_node/left_raw/image_raw_color /ti_mmwave/radar_scan_pcl /ti_mmwave/radar_scan /DCA1000_rawdata --duration=5 -b 3048
 
  ## data synchronization and extraction
  We stored the collected data under the data of capture. Therefore, The data extraction and synchronization process occurs through the cmd
