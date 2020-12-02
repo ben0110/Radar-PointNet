@@ -13,7 +13,8 @@
  as shown in the figure below, data collection occur through starting the rospackages of each sensor and storing the published data in a bagfile.
  
  ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/data_col_pip.jpg)
- the process of data collection were executed on the NVIDIA-xavier board.
+ 
+ The process of data collection were executed on the NVIDIA-xavier board.
  
  ### ZED Camera
  Starting publishing data  with the ZED camera occures through the cmd:
