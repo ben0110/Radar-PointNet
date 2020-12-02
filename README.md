@@ -1,8 +1,11 @@
  # Radar-PointNet
  This repository contains different programs, used for the master thesis "Radar Stereo-Camera Sensor Fusion for 3D Pedestrian Detection"
  and it'S composed of three parts:
+ 
   RSC-Dataset Generation
+ 
   RSC-Dataset Annotation
+ 
   Models (Frustum-poinnet/Radar_pointnets_RoI/Radar-Pointnets-Para)
  
  # RSC-Dataset Generation
