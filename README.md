@@ -91,6 +91,11 @@ _Remarque_: the results outputted from YOLO.V3 are in an json file. To transform
 ## Frustum-PointNet
 
 ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/F_tnet_arch.jpg)
+### prerequisite
+
+for starting the different neural networks, a docker image is used. For this project, we used the image "tensorflow/tensorflow:1.4.0-devel-gpu". the script "start_docker_image.sh" is in charge of starting the docker image. 
+_Remarque_: In this script, on can specify which gpu will be used from the neural network. Also when starting more than one image, the port number in the script has to be changed.
+Furthermore, in the docker image, those packages has to be installed: tk-dev, python-tk, python3-tk.
 
 
 ### Train
