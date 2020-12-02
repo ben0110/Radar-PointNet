@@ -1,10 +1,16 @@
  # Radar-PointNet
  This repository contains different programs, used for the master thesis "Radar Stereo-Camera Sensor Fusion for 3D Pedestrian Detection"
+ and it'S composed of three parts:
+  RSC-Dataset Generation
+  RSC-Dataset Annotation
+  Models (Frustum-poinnet/Radar_pointnets_RoI/Radar-Pointnets-Para)
+ 
  # RSC-Dataset Generation
  ## Data collection
  as shown in the figure below, data collection occur through starting the rospackages of each sensor and storing the published data in a bagfile.
  
  ![teaser](https://github.com/ben0110/Radar-PointNet/blob/master/pictures/data_col_pip.jpg)
+ the process of data collection were executed on the NVIDIA-xavier board.
  
  ### ZED Camera
  Starting publishing data  with the ZED camera occures through the cmd:
